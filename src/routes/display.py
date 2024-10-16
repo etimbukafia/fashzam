@@ -4,8 +4,8 @@ from typing import List, Optional
 
 router = APIRouter()
 
-@router.get('/listings', response_model=List[Products])
-async def read_listings(request: Request, limit: int = Query(20, ge=1, le=100), skip: Optional[int] = None) -> List[Products]:
+@router.get('/display', response_model=List[Products])
+async def display(request: Request, limit: int = Query(20, ge=1, le=100), skip: Optional[int] = None) -> List[Products]:
     """
     Fetches products data from the MongoDB collection and returns the products in a structured format as a list of `Products` objects.
 

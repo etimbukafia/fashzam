@@ -16,9 +16,10 @@ class Products(BaseModel):
     cloudinaryUrl: Optional[str] = Field(..., alias="image_link")
 
 class Product(BaseModel):
-    id: str = Field(..., alias="_id")
-    product_id: str
     productName: str
+    gender: str
+    articleType: str
+    image_link: Optional[str] 
     score: float
 
     class Config:
