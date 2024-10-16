@@ -1,40 +1,50 @@
-@app.get('/listings', response_model=List[House])
-async def read_listings(limit: int = Query(20, ge=1, le=100), skip: int=0) -> List[House]:
+from fastapi import APIRouter, Request, Query, HTTPException
+from models import Products
+from typing import List, Optional
+
+router = APIRouter()
+
+@router.get('/listings', response_model=List[Products])
+async def read_listings(request: Request, limit: int = Query(20, ge=1, le=100), skip: Optional[int] = None) -> List[Products]:
     """
-    Fetches house listings from the MongoDB collection, enriches them with image URLs,
-    and returns the listings in a structured format as a list of `House` objects.
+    Fetches products data from the MongoDB collection and returns the products in a structured format as a list of `Products` objects.
 
     Returns:
-        List[House]: A list of house listings, each containing relevant details
-        and an image URL if available.
+        List[Products]: A list of Products metadata, each containing relevant details
+        and the image URL.
 
-        The read_listings() function returns a list of house listings, 
-        including image URLs like https://hardly-sound-ringtail.ngrok-free.app/images/abc123.
+        The read_listings() function returns a list of products data, 
+        including image URLs.
 
     Raises:
         HTTPException: If there is a validation error with the data format.
     """
+    # If 'skip' is not provided, set is as 1 x limit
+    if skip is None:
+        skip = limit
 
-    result = collection.find({}).skip(skip).limit(limit)
-    result_list = await result.to_list(length=limit)
-
+    collection = request.app.state.config["collection"]  
+    
     try:
-        # Construct listings with image URLs
-        listings_with_images = []
+        # MongoDB query to get the product data with limit and skip
+        result = collection.find({}).skip(skip).limit(limit)
+        result_list = await result.to_list(length=limit)
+
+        products = []
+
         for data in result_list:
-            # Convert ObjectId fields to strings for compatibility
-            data['_id'] = str(data['_id'])
-            if 'image_id' in data:
-                data['image_id'] = str(data['image_id'])
-                # Construct the image URL using the image_id and add it to the data
-                data['homeImage'] = f" https://4018-98-97-79-143.ngrok-free.app/images/{data['image_id']}"
-
-            # Create a House object from the data and add it to the list
-            listings_with_images.append(House(**data))
-
-        # Return the list of enriched house listings
-        return listings_with_images
-    except ValidationError as e:
-        # Log the validation error and raise an HTTP 400 exception with a relevant message
-        app_logger.error(f"Validation error: {e}")
-        raise HTTPException(status_code=400, detail="Invalid data format")
+            data["cloudinaryUrl"] = data.get("image_link", None)
+        
+            try:
+                # Create a Products instance and append it to the products list
+                products.append(Products(**data))
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Error parsing product: {str(e)}")
+            
+        if not products:
+            raise HTTPException(status_code=404, detail="No products found")
+        
+        return products
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving products: {str(e)}")

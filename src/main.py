@@ -4,10 +4,11 @@ import uvicorn
 from pydantic import ValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from helpers import get_model_info
-from config import vectorDatabase
+from config import vectorDatabase, Database
 import logging
 from contextlib import asynccontextmanager
 from routes.search import router as search_router
+from routes.display import router as display_router
 
 #Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -17,14 +18,19 @@ logger = logging.getLogger(__name__)
 A context manager in Python is something that you can use in a with statement, for example, open() can be used as a context manager"""
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Connect to pinecone index
     dino_index = await vectorDatabase.connect()
     # Get model, processor & tokenizer
     dino_model, device = get_model_info()
+    # Connect to mongodb
+    collection = await Database.connect()
+
     
     app.state.config = {
         "index": dino_index,
         "model": dino_model,
-        "device": device
+        "device": device,
+        "collection": collection
     }
     yield
 
@@ -33,6 +39,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(search_router)
+app.include_router(display_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info")
