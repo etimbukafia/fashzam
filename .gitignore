@@ -4,3 +4,4 @@ data/
 .env
 main.ipynb
 test.ipynb
+upload.py
