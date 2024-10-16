@@ -63,7 +63,7 @@ class vectorDatabase:
                 pc = Pinecone(api_key)
                 logging.info(f"Connecting to Pinecone with api_key")
 
-                index_name = "fashzam"
+                index_name = "dino-index"
                 cls._index = pc.Index(index_name)
                 logger.info(f"Connected to index: {cls._index}")
             except Exception as e:

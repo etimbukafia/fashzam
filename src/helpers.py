@@ -1,6 +1,6 @@
 # CONTAINS HELPER FUNCTIONS
-from transformers import CLIPProcessor, CLIPModel, CLIPTokenizer
 import torch
+from torchvision import transforms
 from PIL import Image
 from io import BytesIO
 from fastapi import UploadFile
@@ -8,33 +8,36 @@ import pillow_avif
 
 
 def get_model_info():
+    dino_model = torch.hub.load('facebookresearch/dino:main', 'dino_vitb16', pretrained=True)
+
     # Set the device
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    dino_model = dino_model.to(device)
 
-    # Define the model ID
-    model_ID = "openai/clip-vit-base-patch32"
-
-    # Save the model to device
-    clip_model = CLIPModel.from_pretrained(model_ID).to(device)
-
-    # Get the processor
-    clip_processor = CLIPProcessor.from_pretrained(model_ID)
-
-    # Get the tokenizer
-    clip_tokenizer = CLIPTokenizer.from_pretrained(model_ID)
+    dino_model.eval()
 
     # Return model, processor & tokenizer
-    return clip_model, clip_processor, clip_tokenizer, device
+    return dino_model, device
 
-def get_single_image_embedding(product_image, processor, model, device):
-  image = processor(
-      text = None,
-      images = product_image,
-      return_tensors="pt"
-      )["pixel_values"].to(device)
-  embedding = model.get_image_features(image)
-  # convert the embeddings to numpy array
-  return embedding.cpu().detach().numpy().flatten().tolist()
+def process_images_For_dino():
+  preprocess = transforms.Compose([
+      transforms.Resize(224),
+      transforms.ToTensor(),
+      transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+  ])
+
+  return preprocess
+
+def get_single_dino_image_embedding(product_image, model, device):
+  preprocess = process_images_For_dino()
+  img_tensor = preprocess(product_image).unsqueeze(0).to(device)
+
+  # Get the embedding without computing gradients
+  with torch.no_grad():
+    embedding = model(img_tensor)
+    embedding = embedding.cpu().detach().numpy().flatten().tolist()
+
+  return embedding
 
 async def get_image(image: UploadFile):
     try:
