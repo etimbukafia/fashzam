@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Query, HTTPException
-from models import Products
+from src.models import Products
 from typing import List, Optional
 
 router = APIRouter()
