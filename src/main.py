@@ -3,7 +3,7 @@ from fastapi.responses import StreamingResponse
 import uvicorn
 from pydantic import ValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from helpers import get_model_info
+from src.helpers import get_model_info
 from config import vectorDatabase, Database
 import logging
 from contextlib import asynccontextmanager
