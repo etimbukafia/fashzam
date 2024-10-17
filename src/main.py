@@ -7,8 +7,8 @@ from src.helpers import get_model_info
 from src.config import vectorDatabase, Database
 import logging
 from contextlib import asynccontextmanager
-from routes.search import router as search_router
-from routes.display import router as display_router
+from src.routes.search import router as search_router
+from src.routes.display import router as display_router
 
 #Configure logging
 logging.basicConfig(level=logging.INFO)
