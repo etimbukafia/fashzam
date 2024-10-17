@@ -4,7 +4,7 @@ import uvicorn
 from pydantic import ValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from src.helpers import get_model_info
-from config import vectorDatabase, Database
+from src.config import vectorDatabase, Database
 import logging
 from contextlib import asynccontextmanager
 from routes.search import router as search_router
