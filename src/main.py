@@ -1,9 +1,8 @@
 from fastapi import FastAPI
-from fastapi.responses import StreamingResponse
 import uvicorn
 from pydantic import ValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from src.helpers import get_model_info
+from helpers import get_model_info
 from config import vectorDatabase, Database
 import logging
 from contextlib import asynccontextmanager
@@ -41,8 +40,5 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(search_router)
 app.include_router(display_router)
 
-#if __name__ == "__main__":
-#   uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info")
-
-
-
+if __name__ == "__main__":
+   uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info")

@@ -1,6 +1,6 @@
 from models import Product, SearchResponse
 from fastapi import UploadFile, File, APIRouter, Request
-from src.helpers import get_single_dino_image_embedding, get_image
+from helpers import get_single_dino_image_embedding, get_image
 import logging
 from bson import ObjectId
 logging.basicConfig(level=logging.INFO)

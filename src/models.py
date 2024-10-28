@@ -5,13 +5,12 @@ from fastapi import File, UploadFile
 
 
 class Products(BaseModel):
-    _id: str
     filename: str = Field(..., alias="id")
     gender: str
     masterCategory: str
-    subCategory: float
-    articleType: int
-    baseColour: float
+    subCategory: str
+    articleType: str
+    baseColour: str
     productName: str = Field(..., alias="productDisplayName")
     cloudinaryUrl: Optional[str] = Field(..., alias="image_link")
 
