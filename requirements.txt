@@ -113,7 +113,7 @@ mypy-extensions==1.0.0
 narwhals==1.8.3
 nest-asyncio==1.6.0
 networkx==3.3
-numpy==1.26.4
+# numpy==1.26.4
 oauthlib==3.2.2
 onnxruntime==1.19.2
 openai==1.41.0
@@ -179,7 +179,7 @@ ruff==0.6.2
 s3transfer==0.10.2
 safetensors==0.4.4
 scikit-learn==1.5.1
-scipy==1.14.0
+# scipy==1.14.0
 semantic-router==0.0.60
 semantic-version==2.10.0
 sentence-transformers==3.0.1
