@@ -11,7 +11,7 @@ This AI-powered tool allows users to upload an image of clothing, shoes, or appa
 - Visual Search: Finds exact or visually similar products based on the uploaded image.
 
 - AI-Powered Matching: Uses the DINO model to analyze patterns, colors, and shapes for accurate matching.
-- 
+
 ## Potential Use Cases
 
 - Fashion Retail: Customers can find products they like by simply uploading an image instead of typing lengthy descriptions.
